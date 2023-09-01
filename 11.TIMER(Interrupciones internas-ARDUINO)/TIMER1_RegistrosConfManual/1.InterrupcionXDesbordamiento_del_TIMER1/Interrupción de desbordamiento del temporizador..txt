@@ -1,0 +1,9 @@
+Modo normal con interrupción por timer – desbordamiento.
+Interrupción de desbordamiento del temporizador.
+
+*En este ejemplo, el temporizador se configuró en modo normal, con los pines OC1A y OC1B desconectados (TCCR1A = 0). 
+Se seleccionó Prescaler de 1024 a través del registro TCCR1B. Para que el temporizador se desborde cada segundo, es 
+necesario comenzar su valor con la diferencia entre su valor máximo (65536) y el período deseado. El período se calcula 
+teniendo en cuenta la frecuencia del oscilador y el prescaler seleccionado, además de la frecuencia de interrupción 
+deseada. Finalmente, la interrupción del TIMER1 se habilitó a través del bit T0IE1 del registro TIMSK1. El parpadeo 
+del LED se realiza en la rutina de interrupción donde es necesario volver a cargar el temporizador para el conteo correcto.

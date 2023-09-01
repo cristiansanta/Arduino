@@ -1,0 +1,338 @@
+#include "TimerOne.h"
+
+const uint8_t no_key = 0U;
+
+const uint8_t keys_val[4][4] = {
+  {'1','2','3','A'},
+  {'4','5','6','B'},
+  {'7','8','9','C'},
+  {'*','0','#','D'}
+};
+
+volatile uint8_t key_main_access;
+volatile uint8_t key_state;
+volatile uint8_t old_col;
+volatile uint8_t new_col;
+volatile uint8_t new_row;
+volatile uint8_t main_read;
+volatile uint8_t main_interrupted;
+volatile uint8_t key1;
+volatile uint8_t key2;
+
+const int row_1 = 2;
+const int row_2 = 3;
+const int row_3 = 4;
+const int row_4 = 5;
+const int col_1 = 21;
+const int col_2 = 20;
+const int col_3 = 19;
+const int col_4 = 18;
+
+volatile uint32_t old_time, new_time, diff = 0U;
+
+void setup()
+{
+    Serial.begin(9600);
+
+/* init all vars for keypad in default state */
+    init_all_vars__key_c();
+
+/* 20ms timer interrupt */
+    Timer1.initialize(20000);
+    Timer1.attachInterrupt(isr_key_callback);
+
+/* all colums inout high */
+    pinMode(col_1, INPUT_PULLUP);
+    pinMode(col_2, INPUT_PULLUP);
+    pinMode(col_3, INPUT_PULLUP);
+    pinMode(col_4, INPUT_PULLUP);   
+
+/* all rows output HIGH */
+    pinMode(row_1, OUTPUT);
+    pinMode(row_2, OUTPUT);
+    pinMode(row_3, OUTPUT);
+    pinMode(row_4, OUTPUT);
+
+    digitalWrite(row_1, HIGH);
+    digitalWrite(row_2, HIGH);
+    digitalWrite(row_3, HIGH);
+    digitalWrite(row_4, HIGH);
+
+}
+
+void isr_key_callback()
+{
+    //old_time = micros();
+
+    uint8_t check;
+
+    if(0U == key_main_access)   /* if main is not accessing keypad variable, will happen if main wants to reset keypad varaibles */
+    {
+        if(0U == key_state)    /* ground all rows & check for any col low */
+        {
+            digitalWrite(row_1, LOW); digitalWrite(row_2, LOW); digitalWrite(row_3, LOW); digitalWrite(row_4, LOW); 
+
+            if(!digitalRead(col_1))  /* if found store the col & move to next state */
+            {
+                old_col = 1U;
+                key_state = 1U;
+            }
+            else if(!digitalRead(col_2))
+            {
+                old_col = 2U;
+                key_state = 1U;
+            }
+            else if(!digitalRead(col_3))
+            {
+                old_col = 3U;
+                key_state = 1U;
+            }
+            else if(!digitalRead(col_4))
+            {
+                old_col = 4U;
+                key_state = 1U;
+            }
+            else
+            {
+            }                       
+
+        }
+        else if(1U == key_state)  /* ground one row at a time & check for col low  */
+        {
+            check = 0U;   /* assume row 1 is found to be low */
+            digitalWrite(row_1, LOW); digitalWrite(row_2, HIGH); digitalWrite(row_3, HIGH); digitalWrite(row_4, HIGH);
+            if(!digitalRead(col_1))   /* if found store the col & row */
+            {
+                new_col = 1U;
+                new_row = 1U;
+            }
+            else if(!digitalRead(col_2))
+            {
+                new_col = 2U;
+                new_row = 1U;
+            }
+            else if(!digitalRead(col_3))
+            {
+                new_col = 3U;
+                new_row = 1U;
+            }
+            else if(!digitalRead(col_4))
+            {
+                new_col = 4U;
+                new_row = 1U;
+            }
+            else
+            {
+                check = 1U;  /* initial assumption that this row found to be false, so now check next row */
+            }
+
+            if(1U == check)   /* repeat same as row 1 */
+            {
+                check = 0U;
+                digitalWrite(row_1, HIGH); digitalWrite(row_2, LOW); digitalWrite(row_3, HIGH); digitalWrite(row_4, HIGH);
+                if(!digitalRead(col_1))
+                {
+                    new_col = 1U;
+                    new_row = 2U;
+                }
+                else if(!digitalRead(col_2))
+                {
+                    new_col = 2U;
+                    new_row = 2U;
+                }
+                else if(!digitalRead(col_3))
+                {
+                    new_col = 3U;
+                    new_row = 2U;
+                }
+                else if(!digitalRead(col_4))
+                {
+                    new_col = 4U;
+                    new_row = 2U;
+                }
+                else
+                {
+                    check = 1U;
+                }
+            }
+
+            if(1U == check)    /* repeat same as row 1 */
+            {
+                check = 0U;
+                digitalWrite(row_1, HIGH); digitalWrite(row_2, HIGH); digitalWrite(row_3, LOW); digitalWrite(row_4, HIGH);
+                if(!digitalRead(col_1))
+                {
+                    new_col = 1U;
+                    new_row = 3U;
+                }
+                else if(!digitalRead(col_2))
+                {
+                    new_col = 2U;
+                    new_row = 3U;
+                }
+                else if(!digitalRead(col_3))
+                {
+                    new_col = 3U;
+                    new_row = 3U;
+                }
+                else if(!digitalRead(col_4))
+                {
+                    new_col = 4U;
+                    new_row = 3U;
+                }
+                else
+                {
+                    check = 1U;
+                }
+            }       
+
+            if(1U == check)     /* repeat same as row 1 */
+            {
+                check = 0U;
+                digitalWrite(row_1, HIGH); digitalWrite(row_2, HIGH); digitalWrite(row_3, HIGH); digitalWrite(row_4, LOW);
+                if(!digitalRead(col_1))
+                {
+                    new_col = 1U;
+                    new_row = 4U;
+                }
+                else if(!digitalRead(col_2))
+                {
+                    new_col = 2U;
+                    new_row = 4U;
+                }
+                else if(!digitalRead(col_3))
+                {
+                    new_col = 3U;
+                    new_row = 4U;
+                }
+                else if(!digitalRead(col_4))
+                {
+                    new_col = 4U;
+                    new_row = 4U;
+                }
+                else
+                {
+                    check = 1U;
+                }
+            }     
+
+            if(0U == check)       /* a row low has been found */
+            {
+                if(new_col == old_col)   /* if new column & old colum has been equal */
+                {
+                    if((new_col >= 1U) && (new_col <= 4) && (new_row >= 1) && (new_row <= 4))  /* if new col & new row are within array boundaries */
+                    {
+                        if(0U == main_read)           /* if main is not reading the key state */
+                        {
+                            key1 = keys_val[new_row-1U][new_col-1U];      /* store the key value */
+                        }
+                        else
+                        {
+                            key2 = keys_val[new_row-1U][new_col-1U];    /* mainline got interrupted */
+                            main_interrupted = 1U;
+                        }
+                        key_state = 2U;       /* key found successfully, now move to next state */
+                    }
+                    else
+                    {
+                        key_state = 0U;      /* if new col & new row are not within array boundaries, something wrong, move to default state */
+                    }
+                }
+                else  /* if new col & old col are not same, something wrong, move to default state */
+                {
+                    key_state = 0U;
+                }
+            }
+            else    /* if no row low has been found, something wrong,move to default state */
+            {
+                key_state = 0U;
+            }     
+
+        }
+        else if(2U == key_state)   /* wait for all keys to open again, by grounding all rows, & wait for col to be high */
+        {
+            digitalWrite(row_1, LOW); digitalWrite(row_2, LOW); digitalWrite(row_3, LOW); digitalWrite(row_4, LOW);
+            if(digitalRead(col_1) && digitalRead(col_2) && digitalRead(col_3) && digitalRead(col_4))
+            {
+                key_state = 0U;    /* all col found high, move to default state */
+            }
+        }
+        else
+        {
+        }
+
+    }
+
+    /*new_time = micros();
+    if(diff < (new_time-old_time))
+    {
+        diff =  new_time-old_time;
+        Serial.println(diff);
+    }*/
+
+}
+
+void loop()
+{
+    uint8_t temp;
+
+    while(1)
+    {
+        temp = key_read();
+        if(no_key != temp)
+        {
+            Serial.println((char)temp);
+            Serial.print(" ");
+        }
+    }
+}
+
+uint8_t key_read(void)
+{
+    uint8_t temp;
+
+    main_read = 1U;  /* set var for main line read & read the key value */
+    temp = key1;
+    key1 = no_key;
+    main_read = 0U;
+
+    if(1U == main_interrupted)  /* if main line gets interupted, again read the key var */
+    {
+        temp = key2;
+        key2 = no_key;
+        main_interrupted = 0U;
+    }
+
+    return temp;
+
+}
+
+void clear_key_vars(void)
+{
+    key_main_access = 1U;    /* clear all previous key varaibles & start aagin  */
+
+    key_state = 0U;
+    old_col = 1U;
+    new_col = 1U;
+    new_row = 1U;
+    main_read = 0U;
+    main_interrupted = 0U;
+    key1 = no_key;
+    key2 = no_key; 
+
+    key_main_access = 0U;
+
+}
+
+void init_all_vars__key_c(void)
+{
+    key_main_access = 0U;   /* init ll vars to default state */
+    key_state = 0U;
+    old_col = 1U;
+    new_col = 1U;
+    new_row = 1U;
+    main_read = 0U;
+    main_interrupted = 0U;
+    key1 = no_key;
+    key2 = no_key;
+}

@@ -1,0 +1,6 @@
+Pines:
+RW=0 es escritura
+RW=1 Es lectura
+RW: Es opcional para conectar o no al arduino porque el LCD solo se usa para mostrar datos entonces lo que nos interesa es solo
+escribirle datos al LCD y casi no se esta leyendo datos del LCD.
+Entonces como no se necesita leer datos del LCD solo se pone rw a GND. Para ahorrar pin del arduino.

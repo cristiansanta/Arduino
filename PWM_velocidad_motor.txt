@@ -1,0 +1,2 @@
+Mosfte:Switchea a alta velocidad  el motor DC, este switcheo a alta velocidad permite
+regular la velocidad del motor.

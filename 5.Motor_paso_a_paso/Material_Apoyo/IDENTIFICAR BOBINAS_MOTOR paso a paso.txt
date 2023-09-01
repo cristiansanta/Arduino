@@ -1,0 +1,9 @@
+1.Medir los cables que hacen continuidad para entontrar la primera terna de la bobina que se compone de 2 boibinas y el común (GND)
+de las 2 bobinas, en total 3 cables. La continuidad solo son en estos 3 cables el resto es la segunda terna de las 2 boibinas y GND.
+
+2.Identificar el punto medio o tambien llamado punto comun(GND) para esto se mide resistencia entre los 3 cables que hay
+continuidad y el de mayor resistencia es la 1ra bobina y de los 2 valores de menor resistencia el color que mas se repite es el GND.
+
+3.Prueba de movimiento se unen los GND para saber orden de las bobinas A B C y D y se pone positivo en un cable de la 1ra terna si
+gira a la derecha es A, luego se toma un cable de la segunda terna y si se mueve sera el B despues se tomará de la 1ra terna y si 
+gira en el mismo sentido sera C y ya por ultimo el ultimo cable que sobra de la 2da terna el cual será D.

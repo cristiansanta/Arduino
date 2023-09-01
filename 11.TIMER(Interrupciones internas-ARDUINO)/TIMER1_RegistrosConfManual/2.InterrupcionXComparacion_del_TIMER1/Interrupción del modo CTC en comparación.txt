@@ -1,0 +1,6 @@
+El siguiente ejemplo muestra cómo parpadear el LED usando el modo CTC y generando interrupción en comparación.
+En este ejemplo, se utiliza el modo CTC, por lo que el valor del conteo del temporizador se compara constantemente
+con el registro OCR1A. Para el funcionamiento, se seleccionó el modo CTC, el bit WGM12 = 1 y el prescaler establecido
+en 1024. El valor de comparación se cargó en el registro OCR1A y finalmente se habilitó la interrupción de comparación.
+El LED se invierte en la rutina de interrupción, aquí no es necesario restablecer el temporizador con un valor,
+porque el modo CTC restablece el temporizador cuando se alcanza el valor de comparación.

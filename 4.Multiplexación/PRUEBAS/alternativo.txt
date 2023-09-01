@@ -1,0 +1,53 @@
+int CC[]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x67};
+int pin[7]={2,3,4,5,6,7,8};
+byte t4=12;
+byte t3=11;
+byte t2=10;
+byte t1=9;
+
+
+void setup() {Serial.begin(9600);
+  // put your setup code here, to run once:
+  for(int k=2;k<=8;k++)
+  {
+    pinMode(k, OUTPUT);
+  }
+  for(int i=9;i<=12;i++)
+  {
+    pinMode(i, OUTPUT);
+  }
+
+}
+
+void loop() {
+  int contador=0;
+  while(contador<=9){
+//    convert(CC[contador],2,8);
+   contador++;
+    Serial.print(t2);
+    delay(300);
+    
+  }
+ unsigned long startTime = millis();
+ for(unsigned long elapsed=0; elapsed<300;elapsed = millis() - startTime)
+ {
+     dig(CC[contador]);
+     delay(5);
+ }
+}
+void dig(byte bits)
+{
+  digitalWrite(t4, HIGH);
+  digitalWrite(t3, LOW);
+  digitalWrite(t2, LOW);
+  digitalWrite(t1, LOW);
+  convert(bits);
+}
+
+void convert(byte bits)
+{
+  for(int i=0; i<=7; i++)
+  {
+    digitalWrite(i, bitRead(bits,i)); //bits=Número binario; i-ini=posicion del numero binario bitRead=toda esta funcion entrega el bit del numero binario lo desglosa
+  }
+}

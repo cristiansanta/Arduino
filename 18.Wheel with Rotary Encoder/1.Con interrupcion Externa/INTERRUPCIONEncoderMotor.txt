@@ -1,0 +1,66 @@
+#include <util/atomic.h> // For the ATOMIC_BLOCK macro
+#include <LiquidCrystal.h>
+LiquidCrystal lcd(14, 13, 12, 11, 10, 9); //A0=14
+#define SW 3
+#define ENCA 2 // YELLOW
+#define ENCB 4 // WHITE
+
+int EN1 = 5;//Inyectar PWM para controlar velocidad motor
+int engine_1 = HIGH, engine_2 = LOW;
+const byte PWM=72;//VELOCIDAD MOTOR
+
+volatile long posi = 0; // specify posi as volatile: https://www.arduino.cc/reference/en/language/variables/variable-scope-qualifiers/volatile/
+
+const float pi = 3.14;//Número PI
+const float R = 3.25;//radius of wheel
+const int N = 40;//steps per rotation///Los pasos por rotación dependen del codificador rotatorio que se puede cambiar de 8 a 48
+
+double distance = 0;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(ENCA,INPUT);
+  pinMode(ENCB,INPUT);
+  pinMode(SW, INPUT);
+  pinMode(7, OUTPUT);
+  pinMode(6, OUTPUT);
+  pinMode(EN1, OUTPUT);
+  lcd.begin(16, 2);
+  lcd.print("PID ENCODER");
+  attachInterrupt(digitalPinToInterrupt(ENCA),readEncoder,LOW);
+  attachInterrupt(digitalPinToInterrupt(SW),SWITCH,RISING);
+}
+void SWITCH(){//INTERRUPCION EXTERNA
+  engine_1=!engine_1;
+  engine_2=!engine_2;
+}
+void loop() {
+  //
+  digitalWrite(7, engine_1);
+  digitalWrite(6, engine_2);
+  analogWrite(EN1, PWM);
+  
+  // Read the position in an atomic block to avoid a potential
+  // misread if the interrupt coincides with this code running
+  // see: https://www.arduino.cc/reference/en/language/variables/variable-scope-qualifiers/volatile/
+  long pos = 0; 
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    pos = posi;
+  }
+  distance = ((2*pi*R)/N) * pos;
+    lcd.setCursor(0, 1);
+    lcd.print( distance);
+    lcd.setCursor(5, 1);
+    lcd.print("cm");
+//  Serial.println(pos);
+}
+
+void readEncoder(){
+  int b = digitalRead(ENCB);//INTERRUPCION ENCODER
+  if(b > 0){
+    posi++;
+  }
+  else{
+    posi--;
+  }
+}

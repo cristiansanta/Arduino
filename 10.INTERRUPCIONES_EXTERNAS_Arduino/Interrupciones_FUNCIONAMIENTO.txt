@@ -1,0 +1,27 @@
+INTERRUPCIONES EXTERNAS SON CAUSADAS POR HARDWARE CUANDO CAMBIOS EN LOS ESTADOS LOGICOS DE PINES DEL ARDUINO.
+INTERRUPCIONES INTERNAS SON CAUSADAS POR LOS TIMERS PARA REALIZAR UNATEMPORIZACION EXACTA.
+
+Las variables que sean compartidas por el programa principal y la función de Interrupción, deben ser declaradas como VOLATILE,
+dado que una variable volátil tiene la característica de que debe ser consultada antes de ser usada.
+
+ANTIREBOTE: Eliminar rebote en sistemas mecanicos.
+1.Una forma es por Hardware es decir poner un capacitor en serie con el sistema electromecanico asi se adiciona un retardo a la 
+ pulsacion del sistema mecánico eliminando el ruido generado por dicho sistema.
+2.Muchas veces no es conveniente agregar hardware al sistema o proyecto entonces tambien se pueden eliminar estos rebotes(bounce)
+ a traves de programación(software) utilizando la funcion millis().
+
+Parámetros:
+interrupt: el número de la interrupción. Tipos de datos permitidos: int
+pin: el número de pin de Arduino.
+ISR: el ISR para llamar cuando se produce la interrupción; Esta función no debe tener parámetros y no devuelve nada. Esta función a veces se conoce como una rutina de servicio de interrupción.
+Modo: definir cuándo debe activarse la interrupción. Cuatro constantes están predefinidas como valores válidos:
+LOW para activar la interrupción cuando el pin está bajo;
+CHANGE para activar la interrupción cada vez que el pin cambia de valor;
+RISING para disparar cuando el pin va de bajo a alto;
+FALLING para cuando el pin pasa de alto a bajo.
+Las placas Due, Zero y MKR1000 también permiten:
+HIGH para activar la interrupción siempre que el pin esté alto.
+
+*attachInterrupt (digitalPinToInterrupt (pin), ISR, modo); //(recomendado)-------------------->Este
+attachInterrupt (Interrupt, ISR, modo); //(no recomendado)
+attachInterrupt (pin, ISR, modo); //Arduino SAMD Boards, One WiFi Rev2, Due y 101

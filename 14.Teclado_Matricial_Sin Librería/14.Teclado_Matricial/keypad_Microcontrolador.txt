@@ -1,0 +1,11 @@
+Para programar el Teclado o Keypad en Arduino o en cualquier otro microcontrolador, basta con seguir en orden la siguiente secuencia:
+
+1.Inicialmente conectamos el teclado matricial en los PINES DIGITALES del ARDUINO. Para eso será importante poder identificar cuales 
+son las columnas y las filas del teclado.
+2.Las Filas del Teclado estarán conectadas en PINES DIGITALES configurados como SALIDAS.
+3.Las Columnas del Teclado estarán conectadas en PINES DIGITALES configurados como ENTRADAS y con el PULLUP activado
+(por lo tanto, estas entradas siempre estarán recibiendo un 1 lógico, si ningún botón es presionado).
+4.Configuramos TODAS las SALIDAS (Filas) en 1 lógico o 5v, es decir vamos a dejarlas encendidas.
+5.Aplicamos el concepto de la MULTIPLEXACIÓN: Aquí vamos a mandar un 0 lógico por cada fila y vamos a leer todas las columnas, si se 
+detecta que alguna columna recibió el cero lógico, indica que el botón que comparte la fila y la columna fue presionado, en caso 
+contrario vuelvo a colocar la fila en 1 lógico y verifico la siguiente fila.

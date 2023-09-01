@@ -1,0 +1,9 @@
+AREF:
+Si un sensor entrega voltages de 3.3V en realidad no estoy aprovechando los 1023 bits del arduino y estoy recibiendo 0 - 675 bits
+asi se esta perdiendo resolucion y si son voltajes muy pequeños el arduino puede perder informacion valiosisima en el sistema 
+de automatizaacion que se este utilizando, entonces el AREF me ayuda a aprovechar los 1023 bits aunque sea una señal de entrada
+de 3.3V puesto que CON ESTO EL ARDUINO SABE QUE LA ENTRADA MAXIMA ES DE 3.3V usando los 1023 bits.
+
+FUNCIONES:
+//analogReference(DEFAULT);    //Referencia analógica por defecto
+//analogReference(EXTERNAL);//CON ESTO EL ARDUINO SABE QUE LA ENTRADA MAXIMA ES DE 3.3V y habilita los 1023 bits maximos para la señal de 3.3 conectado con el AREF

@@ -1,0 +1,2 @@
+-Con I2C imprime solo en 'void loop' en el void de la interrupcion no imprime nada.
+-Sin I2C imprime en void loop y en el void de la interrupcion tambien imprime.

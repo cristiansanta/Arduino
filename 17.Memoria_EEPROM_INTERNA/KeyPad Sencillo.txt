@@ -1,0 +1,95 @@
+#include <LiquidCrystal.h>
+LiquidCrystal lcd(54,13,12,11,10,9);   //A0=54
+
+char key[4][4]={{'1','2','3','A'},{'4','5','6','B'},{'7','8','9','C'},{'*','0','#','D'}};
+int fila[4]={2,3,4,5};
+int col[4]={6,7,8,55};
+
+void setup() {
+  lcd.begin(16,2);
+  for(int i=0;i<=3;i++)
+  {
+    pinMode(fila[i], OUTPUT);
+    digitalWrite(fila[i], 1);
+  }
+  
+  for(int k=0;k<=3;k++)
+  {
+    pinMode(col[k], INPUT_PULLUP);
+  }
+  
+}
+
+void loop() {
+  for(int i=0;i<=3;i++)
+  {digitalWrite(fila[i], LOW);
+     // Barrer todas las columnas comprobando pulsaciones
+    for(int k=0;k<=3;k++)
+    {
+      if(digitalRead(col[k])==LOW)
+      {
+        lcd.home();
+        lcd.print(key[i][k]);
+        while(digitalRead(col[k])==LOW){};
+      }
+    }
+    // Devolver la fila a alta impedancia
+    digitalWrite(fila[i], HIGH);
+  }
+  delay(10);
+}
+
+//CON RETORNO DE VALOR
+/*#include <LiquidCrystal.h>
+LiquidCrystal lcd(54,13,12,11,10,9);   //A0=54
+
+char key[4][4]={{'1','2','3','A'},{'4','5','6','B'},{'7','8','9','C'},{'*','0','#','D'}};
+int fila[4]={2,3,4,5};
+int col[4]={6,7,8,55};
+byte i,k,C=0,F=0;
+
+void setup() {
+  Serial.begin(9600);
+  lcd.begin(16,2);
+  for(i=0;i<=3;i++)
+  {
+    pinMode(fila[i], OUTPUT);
+    digitalWrite(fila[i], 0);
+  }
+  
+  for(k=0;k<=3;k++)
+  {
+    pinMode(col[k], INPUT_PULLUP);
+  }
+  
+}
+
+bool keyPad()
+{ bool retorno=false;
+    for(i=0;i<=3;i++)
+  {   digitalWrite(fila[i], LOW);
+     // Barrer todas las columnas comprobando pulsaciones
+    for(k=0;k<=3;k++)
+    {
+      if(digitalRead(col[k])==LOW)
+      { C=k;
+        F=i;
+        while(digitalRead(col[k])==LOW){};
+        retorno=true;
+      }
+    }
+    // Devolver la fila a alta impedancia
+    digitalWrite(fila[i], HIGH);
+  }
+  return retorno;
+}
+
+void loop() {
+      if(keyPad()){
+        lcd.home();
+        lcd.print(key[F][C]);
+        Serial.print(key[F][C]);
+       }
+   delay(10);       
+}
+*/
